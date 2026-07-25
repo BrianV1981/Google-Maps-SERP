@@ -117,6 +117,7 @@ cd Google-Maps-SERP
 npm install
 npx playwright install chromium
 cp .env.example .env
+npx prisma db push
 npm run dev
 ```
 
