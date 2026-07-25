@@ -116,6 +116,7 @@ git clone https://github.com/danishfareed/Google-Maps-SERP.git
 cd Google-Maps-SERP
 npm install
 npx playwright install chromium
+cp .env.example .env
 npm run dev
 ```
 
