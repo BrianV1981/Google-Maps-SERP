@@ -215,22 +215,16 @@ export async function runScan(scanId: string) {
         async function createFreshContext(b: Browser, lat: number, lng: number): Promise<{ context: BrowserContext; page: Page }> {
             const { locale, timezoneId } = getRegionalSettings(scan!.centerLat, scan!.centerLng);
 
-            // Randomize viewport slightly to reduce fingerprinting
-            const widthJitter = Math.floor(Math.random() * 100) - 50;
-            const heightJitter = Math.floor(Math.random() * 100) - 50;
-
-            // Rotate User Agents
-            const userAgents = [
-                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Safari/605.1.15',
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0'
-            ];
-            const randomUA = userAgents[Math.floor(Math.random() * userAgents.length)];
+            // [FIX #8] Force Mobile Device Spoofing
+            // Desktop Google Maps falls back to IP address. Mobile Maps relies on HTML5 GPS.
+            // We spoof an iPhone 14 Pro Max to force Google to respect our spoofed coordinates.
+            const mobileUA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1';
 
             const ctx = await b.newContext({
-                viewport: { width: 1366 + widthJitter, height: 768 + heightJitter },
-                userAgent: randomUA,
+                viewport: { width: 430, height: 932 }, // iPhone 14 Pro Max viewport
+                userAgent: mobileUA,
+                isMobile: true,
+                hasTouch: true,
                 locale,
                 timezoneId,
                 // Start with zero state — no cookies, no storage
