@@ -35,10 +35,8 @@ export async function scrapeGMB(page: Page, keyword: string, lat: number, lng: n
         // Use a 30s timeout for the initial load, wait for domcontentloaded
         // If this fails, it's likely a dead proxy or a block
         try {
-            // [FIX #8] We intentionally remove the /@lat,lng viewport from the URL.
-            // This forces Google Maps to natively ask "Where is this user?" and read the spoofed HTML5 GPS, 
-            // completely eliminating the IP address panning bias.
-            await page.goto(`https://www.google.com/maps/search/${encodeURIComponent(keyword)}?hl=en`, {
+            // [FIX #8] Reverting to author's native URL logic but keeping the crosshairs click
+            await page.goto(`https://www.google.com/maps/search/${encodeURIComponent(keyword)}/@${lat},${lng},15z/?hl=en`, {
                 waitUntil: 'domcontentloaded',
                 timeout: 30000,
             });
