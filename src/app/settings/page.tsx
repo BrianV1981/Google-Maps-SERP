@@ -279,14 +279,14 @@ export default function SettingsPage() {
                                         <p className="font-bold text-gray-900">Auto-Retry Scans</p>
                                         <p className="text-xs text-gray-500">Retry up to 3 times on spatial failure.</p>
                                     </div>
-                                    <input type="checkbox" defaultChecked className="w-6 h-6 rounded-lg border-gray-200 text-blue-600 focus:ring-blue-500" />
+                                    <input type="checkbox" disabled defaultChecked className="w-6 h-6 rounded-lg border-gray-200 text-gray-400 opacity-40 cursor-not-allowed" title="Feature pending backend implementation" />
                                 </div>
                                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
                                     <div>
                                         <p className="font-bold text-gray-900">Infinite History</p>
                                         <p className="text-xs text-gray-500">Never delete old scan records.</p>
                                     </div>
-                                    <input type="checkbox" className="w-6 h-6 rounded-lg border-gray-200 text-blue-600 focus:ring-blue-500" />
+                                    <input type="checkbox" disabled className="w-6 h-6 rounded-lg border-gray-200 text-gray-400 opacity-40 cursor-not-allowed" title="Feature pending backend implementation" />
                                 </div>
                             </div>
                         </Card>
