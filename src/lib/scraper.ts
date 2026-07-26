@@ -35,7 +35,10 @@ export async function scrapeGMB(page: Page, keyword: string, lat: number, lng: n
         // Use a 30s timeout for the initial load, wait for domcontentloaded
         // If this fails, it's likely a dead proxy or a block
         try {
-            await page.goto(`https://www.google.com/maps/search/${encodeURIComponent(keyword)}/@${lat},${lng},15z/?hl=en`, {
+            // [FIX #8] We intentionally remove the /@lat,lng viewport from the URL.
+            // This forces Google Maps to natively ask "Where is this user?" and read the spoofed HTML5 GPS, 
+            // completely eliminating the IP address panning bias.
+            await page.goto(`https://www.google.com/maps/search/${encodeURIComponent(keyword)}?hl=en`, {
                 waitUntil: 'domcontentloaded',
                 timeout: 30000,
             });
@@ -55,6 +58,18 @@ export async function scrapeGMB(page: Page, keyword: string, lat: number, lng: n
             }
         } catch (e) {
             // Ignore timeouts
+        }
+
+        // [FIX #8] Aggressively force Google to lock onto the spoofed GPS coordinates
+        try {
+            await logger.debug('[Scraper] Forcing Google Maps to read spoofed GPS location...', 'SCANNER');
+            const crosshairs = page.locator('button#sVuEFc, button[aria-label="Show your location"], button[aria-label="Update location"]').first();
+            if (await crosshairs.isVisible({ timeout: 3000 })) {
+                await crosshairs.click();
+                await page.waitForTimeout(2500); // Wait for the camera to fly to the spoofed GPS and refresh the results
+            }
+        } catch (e) {
+            await logger.debug('[Scraper] Location button not found or already locked.', 'SCANNER');
         }
 
         // Wait for results to load - use multiple common selectors
